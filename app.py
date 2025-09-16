@@ -282,7 +282,7 @@ BUSINESS_IMPACT = {
     "alert_fatigue_reduction": 78
 }
 
-# AI Assistant Overlay
+# AI Assistant Overlay with working button
 if st.session_state.ai_assistant_visible:
     st.markdown(f"""
     <div class="ai-overlay" id="ai-overlay">
@@ -300,77 +300,93 @@ if st.session_state.ai_assistant_visible:
         </div>
     </div>
     """, unsafe_allow_html=True)
-
-# Enhanced button to enter website with voice functionality
-if st.session_state.ai_assistant_visible:
-    # Add JavaScript for text-to-speech functionality
+    
+    # Voice functionality with HTML audio
     st.markdown("""
     <script>
-    function speakWelcome() {
+    function playWelcomeVoice() {
         if ('speechSynthesis' in window) {
+            // Stop any ongoing speech
+            speechSynthesis.cancel();
+            
             const message = new SpeechSynthesisUtterance(
-                "Welcome to the Smart Grid Predictive Maintenance platform! I'm your ML Engineering Assistant, ready to help you explore our advanced analytics and prevent equipment failures. Let's dive into the data and save millions together!"
+                "Welcome to the Smart Grid Predictive Maintenance platform! I'm your friendly ML Engineering Assistant. I've been trained on over 9,000 grid assets and I'm ready to help you prevent failures and save millions! Let's explore the data together!"
             );
-            message.rate = 0.9;
-            message.pitch = 1.1;
-            message.volume = 0.8;
             
-            // Try to use a friendly voice
-            const voices = speechSynthesis.getVoices();
-            const preferredVoice = voices.find(voice => 
-                voice.name.includes('Google') || 
-                voice.name.includes('Samantha') || 
-                voice.name.includes('Karen') ||
-                voice.lang.includes('en-US')
-            );
-            if (preferredVoice) {
-                message.voice = preferredVoice;
-            }
+            message.rate = 0.85;
+            message.pitch = 1.0;
+            message.volume = 0.9;
             
-            speechSynthesis.speak(message);
+            // Set voice after a short delay to ensure voices are loaded
+            setTimeout(() => {
+                const voices = speechSynthesis.getVoices();
+                const femaleVoice = voices.find(voice => 
+                    voice.name.toLowerCase().includes('female') ||
+                    voice.name.toLowerCase().includes('samantha') ||
+                    voice.name.toLowerCase().includes('karen') ||
+                    voice.name.toLowerCase().includes('susan') ||
+                    (voice.lang.includes('en') && voice.name.toLowerCase().includes('google'))
+                ) || voices.find(voice => voice.lang.includes('en-US')) || voices[0];
+                
+                if (femaleVoice) {
+                    message.voice = femaleVoice;
+                }
+                
+                speechSynthesis.speak(message);
+            }, 100);
+        } else {
+            alert('Voice synthesis not supported in your browser. Please use Chrome, Safari, or Edge for the best experience!');
         }
-    }
-    
-    function enterWebsite() {
-        speakWelcome();
-        // Small delay to let speech start, then trigger button click
-        setTimeout(() => {
-            const button = document.querySelector('[data-testid="baseButton-secondary"]');
-            if (button && button.textContent.includes('Enter Website')) {
-                button.click();
-            }
-        }, 500);
     }
     </script>
     """, unsafe_allow_html=True)
     
-    # Custom styled button for entering website
-    st.markdown("""
-    <div style="text-align: center; margin-top: 2rem;">
-        <button onclick="enterWebsite()" 
-                style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-                       color: white; border: none; border-radius: 30px; 
-                       padding: 15px 40px; font-size: 1.2rem; font-weight: 600;
-                       cursor: pointer; transition: all 0.3s ease;
-                       text-transform: uppercase; letter-spacing: 2px;
-                       box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);"
-                onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(255, 107, 53, 0.6)';"
-                onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 8px 25px rgba(255, 107, 53, 0.4)';">
-            🚀 Enter Website & Start Voice Tour
-        </button>
-    </div>
-    """, unsafe_allow_html=True)
+    # Centered buttons
+    col1, col2, col3 = st.columns([1, 2, 1])
     
-    # Fallback Streamlit button (hidden but functional)
-    if st.button("Enter Website", key="enter_button", help="Click to enter the ML platform"):
-        st.session_state.ai_assistant_visible = False
-        st.rerun()
+    with col2:
+        # Main enter button
+        if st.button("🚀 Enter Website & Start Voice Tour", 
+                    key="main_enter_button", 
+                    help="Click to enter the platform with voice welcome",
+                    use_container_width=True):
+            st.session_state.ai_assistant_visible = False
+            # Trigger voice in browser
+            st.markdown("""
+            <script>
+            setTimeout(playWelcomeVoice, 500);
+            </script>
+            """, unsafe_allow_html=True)
+            st.rerun()
         
-    # Voice controls info
+        # Voice test button
+        st.markdown("""
+        <div style="text-align: center; margin: 1rem 0;">
+            <button onclick="playWelcomeVoice()" 
+                    style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                           color: white; border: none; border-radius: 25px; 
+                           padding: 10px 25px; font-size: 1rem; font-weight: 500;
+                           cursor: pointer; transition: all 0.3s ease;">
+                🔊 Test Voice Assistant
+            </button>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Silent entry option
+        if st.button("Enter Silently (No Voice)", 
+                    key="silent_enter_button",
+                    help="Enter without voice greeting"):
+            st.session_state.ai_assistant_visible = False
+            st.rerun()
+    
+    # Instructions
     st.markdown("""
-    <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #999;">
-    🔊 <strong>Voice Assistant Enabled</strong> - Your browser will ask for microphone permissions<br>
-    Click the button above to hear a friendly welcome message as you enter!
+    <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #999; background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px;">
+    <strong>🔊 Voice Instructions:</strong><br>
+    • Click "Test Voice Assistant" first to check if voice works<br>
+    • If you hear the welcome message, then click "Enter Website & Start Voice Tour"<br>
+    • Some browsers may block audio initially - try clicking "Test Voice" first<br>
+    • Works best in Chrome, Safari, and Edge browsers
     </div>
     """, unsafe_allow_html=True)
 
