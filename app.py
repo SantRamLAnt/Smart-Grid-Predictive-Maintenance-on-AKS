@@ -282,111 +282,91 @@ BUSINESS_IMPACT = {
     "alert_fatigue_reduction": 78
 }
 
-# AI Assistant Overlay with working button
+# Simple AI Assistant without complex overlay - just show message and buttons
 if st.session_state.ai_assistant_visible:
-    st.markdown(f"""
-    <div class="ai-overlay" id="ai-overlay">
-        <div class="ai-assistant">
-            <div class="ai-avatar">🤖</div>
-            <h2 style="color: #ff6b35; margin-bottom: 1rem;">ML Engineering Assistant</h2>
-            <p style="font-size: 1.2em; line-height: 1.6; margin-bottom: 1.5rem;">
+    # Create a centered welcome screen
+    st.markdown("""
+    <div style="display: flex; justify-content: center; align-items: center; 
+                min-height: 80vh; background: linear-gradient(135deg, #0e1117 0%, #1a1a2e 100%);">
+        <div style="background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+                    border: 3px solid #ff6b35; border-radius: 25px; padding: 3rem;
+                    max-width: 600px; text-align: center; box-shadow: 0 25px 50px rgba(255, 107, 53, 0.4);">
+            
+            <div style="width: 100px; height: 100px; border-radius: 50%;
+                        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                        margin: 0 auto 2rem; display: flex; align-items: center; justify-content: center;
+                        font-size: 3rem; animation: pulse 2s infinite;">
+                🤖
+            </div>
+            
+            <h1 style="color: #ff6b35; margin-bottom: 1.5rem; font-size: 2.5rem;">
+                ML Engineering Assistant
+            </h1>
+            
+            <p style="font-size: 1.3em; line-height: 1.6; margin-bottom: 1.5rem; color: white;">
                 Hey there! I'm your AI-powered predictive maintenance assistant. I've been trained on 
                 9,000+ grid assets using XGBoost, TensorFlow, and scikit-learn ensemble models. 
                 Ready to prevent failures and save millions? Let's dive into the data! 📊
             </p>
-            <p style="font-size: 1em; color: #ccc; margin-bottom: 2rem;">
+            
+            <p style="font-size: 1.1em; color: #ccc; margin-bottom: 2.5rem;">
                 <strong>Current Status:</strong> 146 high-risk assets identified • $2.3M potential savings
             </p>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Voice functionality with HTML audio
-    st.markdown("""
-    <script>
-    function playWelcomeVoice() {
-        if ('speechSynthesis' in window) {
-            // Stop any ongoing speech
-            speechSynthesis.cancel();
-            
-            const message = new SpeechSynthesisUtterance(
-                "Welcome to the Smart Grid Predictive Maintenance platform! I'm your friendly ML Engineering Assistant. I've been trained on over 9,000 grid assets and I'm ready to help you prevent failures and save millions! Let's explore the data together!"
-            );
-            
-            message.rate = 0.85;
-            message.pitch = 1.0;
-            message.volume = 0.9;
-            
-            // Set voice after a short delay to ensure voices are loaded
-            setTimeout(() => {
-                const voices = speechSynthesis.getVoices();
-                const femaleVoice = voices.find(voice => 
-                    voice.name.toLowerCase().includes('female') ||
-                    voice.name.toLowerCase().includes('samantha') ||
-                    voice.name.toLowerCase().includes('karen') ||
-                    voice.name.toLowerCase().includes('susan') ||
-                    (voice.lang.includes('en') && voice.name.toLowerCase().includes('google'))
-                ) || voices.find(voice => voice.lang.includes('en-US')) || voices[0];
-                
-                if (femaleVoice) {
-                    message.voice = femaleVoice;
-                }
-                
-                speechSynthesis.speak(message);
-            }, 100);
-        } else {
-            alert('Voice synthesis not supported in your browser. Please use Chrome, Safari, or Edge for the best experience!');
-        }
-    }
-    </script>
-    """, unsafe_allow_html=True)
+    # Now add the buttons below the welcome message - these will be visible
+    st.markdown("---")
     
-    # Centered buttons
-    col1, col2, col3 = st.columns([1, 2, 1])
+    # Center the buttons
+    col1, col2, col3 = st.columns([1, 1, 1])
     
-    with col2:
-        # Main enter button
-        if st.button("🚀 Enter Website & Start Voice Tour", 
-                    key="main_enter_button", 
-                    help="Click to enter the platform with voice welcome",
+    with col1:
+        if st.button("🚀 Enter Website", 
+                    key="enter_main_button", 
+                    help="Click to enter the ML platform",
                     use_container_width=True):
             st.session_state.ai_assistant_visible = False
-            # Trigger voice in browser
+            st.success("Welcome to the Smart Grid Predictive Maintenance Platform!")
+            st.rerun()
+    
+    with col2:
+        if st.button("🔊 Test Voice", 
+                    key="test_voice_button",
+                    help="Test voice synthesis",
+                    use_container_width=True):
             st.markdown("""
             <script>
-            setTimeout(playWelcomeVoice, 500);
+            if ('speechSynthesis' in window) {
+                const msg = new SpeechSynthesisUtterance('Hello! Welcome to our Smart Grid platform. I am your ML assistant ready to help!');
+                msg.rate = 0.8;
+                speechSynthesis.speak(msg);
+            } else {
+                alert('Voice not supported in your browser');
+            }
             </script>
             """, unsafe_allow_html=True)
-            st.rerun()
-        
-        # Voice test button
-        st.markdown("""
-        <div style="text-align: center; margin: 1rem 0;">
-            <button onclick="playWelcomeVoice()" 
-                    style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-                           color: white; border: none; border-radius: 25px; 
-                           padding: 10px 25px; font-size: 1rem; font-weight: 500;
-                           cursor: pointer; transition: all 0.3s ease;">
-                🔊 Test Voice Assistant
-            </button>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Silent entry option
-        if st.button("Enter Silently (No Voice)", 
-                    key="silent_enter_button",
-                    help="Enter without voice greeting"):
+            st.info("🔊 Voice test initiated! You should hear a welcome message.")
+    
+    with col3:
+        if st.button("ℹ️ Skip Intro", 
+                    key="skip_intro_button",
+                    help="Skip directly to the platform",
+                    use_container_width=True):
             st.session_state.ai_assistant_visible = False
             st.rerun()
     
     # Instructions
     st.markdown("""
-    <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #999; background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px;">
-    <strong>🔊 Voice Instructions:</strong><br>
-    • Click "Test Voice Assistant" first to check if voice works<br>
-    • If you hear the welcome message, then click "Enter Website & Start Voice Tour"<br>
-    • Some browsers may block audio initially - try clicking "Test Voice" first<br>
-    • Works best in Chrome, Safari, and Edge browsers
+    <div style="text-align: center; margin-top: 2rem; padding: 1rem; 
+                background: rgba(255, 107, 53, 0.1); border-radius: 10px;">
+    <h4 style="color: #ff6b35;">Quick Start Instructions:</h4>
+    <p style="color: #ccc;">
+    • Click <strong>"🚀 Enter Website"</strong> to start exploring the ML platform<br>
+    • Try <strong>"🔊 Test Voice"</strong> to check if voice synthesis works in your browser<br>
+    • Use <strong>"ℹ️ Skip Intro"</strong> to go directly to the dashboard
+    </p>
     </div>
     """, unsafe_allow_html=True)
 
