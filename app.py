@@ -282,41 +282,67 @@ BUSINESS_IMPACT = {
     "alert_fatigue_reduction": 78
 }
 
-# Simple AI Assistant Overlay with X close button
+# Simple welcome screen without complex overlay
 if st.session_state.ai_assistant_visible:
+    # Clear the page and show welcome screen
     st.markdown("""
-    <div class="ai-overlay" id="ai-overlay">
-        <div class="ai-assistant">
-            <div class="ai-avatar">🤖</div>
-            <h2 style="color: #ff6b35; margin-bottom: 1rem;">ML Engineering Assistant</h2>
-            <p style="font-size: 1.2em; line-height: 1.6; margin-bottom: 1.5rem;">
+    <style>
+    .welcome-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+        text-align: center;
+        padding: 2rem;
+    }
+    .welcome-card {
+        background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+        border: 3px solid #ff6b35;
+        border-radius: 25px;
+        padding: 3rem;
+        max-width: 600px;
+        box-shadow: 0 25px 50px rgba(255, 107, 53, 0.4);
+    }
+    .avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        margin: 0 auto 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+    }
+    </style>
+    
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <div class="avatar">🤖</div>
+            <h1 style="color: #ff6b35; margin-bottom: 1.5rem;">ML Engineering Assistant</h1>
+            <p style="color: white; font-size: 1.2em; line-height: 1.6; margin-bottom: 1.5rem;">
                 Hey there! I'm your AI-powered predictive maintenance assistant. I've been trained on 
                 9,000+ grid assets using XGBoost, TensorFlow, and scikit-learn ensemble models. 
-                Ready to prevent failures and save millions? Let's dive into the data! 📊
+                Ready to prevent failures and save millions? Let's dive into the data!
             </p>
-            <p style="font-size: 1em; color: #ccc; margin-bottom: 2rem;">
+            <p style="color: #ccc; font-size: 1.1em; margin-bottom: 2rem;">
                 <strong>Current Status:</strong> 146 high-risk assets identified • $2.3M potential savings
             </p>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Add close button positioned in top right corner
-    col1, col2, col3, col4, col5 = st.columns([4, 1, 1, 1, 1])
-    with col5:
-        if st.button("❌", key="close_overlay", help="Close and enter website"):
-            st.session_state.ai_assistant_visible = False
-            st.rerun()
-    
-    # Add main enter button centered below
-    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 1, 1])
+    # Simple centered button that will definitely work
+    col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("🚀 Enter Website", 
-                    key="enter_website_main", 
-                    help="Click to enter the ML platform",
-                    use_container_width=True):
+        if st.button("🚀 Enter Smart Grid Platform", 
+                    key="enter_platform", 
+                    use_container_width=True,
+                    type="primary"):
             st.session_state.ai_assistant_visible = False
+            st.success("Welcome to the Smart Grid Predictive Maintenance Platform!")
+            time.sleep(1)
             st.rerun()
 
 # Main content (only show when overlay is dismissed)
