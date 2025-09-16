@@ -585,6 +585,8 @@ if not st.session_state.ai_assistant_visible:
                 "crew_id": "CREW-A01",
                 "specialization": "Transmission Maintenance",
                 "assigned_assets": ["AST-0001", "AST-0047", "AST-0089"],
+                "locations": ["Hartford, CT", "New Haven, CT", "Waterbury, CT"],
+                "service_territories": "Central Connecticut Region",
                 "total_work_hours": 32,
                 "travel_time_optimized": "2.3 hours saved",
                 "priority_score": 0.94
@@ -593,6 +595,8 @@ if not st.session_state.ai_assistant_visible:
                 "crew_id": "CREW-B03",
                 "specialization": "Distribution Repair",
                 "assigned_assets": ["AST-0012", "AST-0034", "AST-0156"],
+                "locations": ["Springfield, MA", "Westfield, MA", "Holyoke, MA"],
+                "service_territories": "Western Massachusetts Region",
                 "total_work_hours": 28,
                 "travel_time_optimized": "1.8 hours saved",
                 "priority_score": 0.87
@@ -601,9 +605,41 @@ if not st.session_state.ai_assistant_visible:
                 "crew_id": "CREW-C07",
                 "specialization": "Protection Systems",
                 "assigned_assets": ["AST-0023", "AST-0078"],
+                "locations": ["Stamford, CT", "Norwalk, CT"],
+                "service_territories": "Fairfield County, CT",
                 "total_work_hours": 24,
                 "travel_time_optimized": "3.1 hours saved",
                 "priority_score": 0.91
+            },
+            {
+                "crew_id": "CREW-D12",
+                "specialization": "Substation Maintenance",
+                "assigned_assets": ["AST-0067", "AST-0102", "AST-0134"],
+                "locations": ["Boston, MA", "Cambridge, MA", "Quincy, MA"],
+                "service_territories": "Greater Boston Metropolitan Area",
+                "total_work_hours": 36,
+                "travel_time_optimized": "4.2 hours saved",
+                "priority_score": 0.89
+            },
+            {
+                "crew_id": "CREW-E05",
+                "specialization": "Underground Systems",
+                "assigned_assets": ["AST-0045", "AST-0098"],
+                "locations": ["Bridgeport, CT", "New London, CT"],
+                "service_territories": "Coastal Connecticut Corridor",
+                "total_work_hours": 22,
+                "travel_time_optimized": "1.9 hours saved",
+                "priority_score": 0.92
+            },
+            {
+                "crew_id": "CREW-F08",
+                "specialization": "Emergency Response",
+                "assigned_assets": ["AST-0156", "AST-0178", "AST-0203"],
+                "locations": ["Worcester, MA", "Fitchburg, MA", "Leominster, MA"],
+                "service_territories": "Central Massachusetts Region",
+                "total_work_hours": 40,
+                "travel_time_optimized": "3.7 hours saved",
+                "priority_score": 0.96
             }
         ]
         
@@ -611,9 +647,11 @@ if not st.session_state.ai_assistant_visible:
             st.markdown(f"""
             <div class="crew-optimization">
             <h4>{crew['crew_id']} - {crew['specialization']}</h4>
-            <p><strong>Assigned Assets:</strong> {', '.join(crew['assigned_assets'])}</p>
+            <p><strong>Service Territory:</strong> {crew['service_territories']}</p>
+            <p><strong>Assigned Locations:</strong> {', '.join(crew['locations'])}</p>
+            <p><strong>Asset IDs:</strong> {', '.join(crew['assigned_assets'])}</p>
             <p><strong>Total Work Hours:</strong> {crew['total_work_hours']} hours | <strong>Travel Optimization:</strong> {crew['travel_time_optimized']}</p>
-            <p><strong>Priority Score:</strong> {crew['priority_score']:.0%} (ML-calculated based on asset criticality + location)</p>
+            <p><strong>Priority Score:</strong> {crew['priority_score']:.0%} (ML-calculated based on asset criticality + geographic clustering)</p>
             </div>
             """, unsafe_allow_html=True)
 
