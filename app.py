@@ -282,93 +282,44 @@ BUSINESS_IMPACT = {
     "alert_fatigue_reduction": 78
 }
 
-# Simple AI Assistant without complex overlay - just show message and buttons
+# AI Assistant Overlay with integrated enter button
 if st.session_state.ai_assistant_visible:
-    # Create a centered welcome screen
     st.markdown("""
-    <div style="display: flex; justify-content: center; align-items: center; 
-                min-height: 80vh; background: linear-gradient(135deg, #0e1117 0%, #1a1a2e 100%);">
-        <div style="background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
-                    border: 3px solid #ff6b35; border-radius: 25px; padding: 3rem;
-                    max-width: 600px; text-align: center; box-shadow: 0 25px 50px rgba(255, 107, 53, 0.4);">
-            
-            <div style="width: 100px; height: 100px; border-radius: 50%;
-                        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-                        margin: 0 auto 2rem; display: flex; align-items: center; justify-content: center;
-                        font-size: 3rem; animation: pulse 2s infinite;">
-                🤖
-            </div>
-            
-            <h1 style="color: #ff6b35; margin-bottom: 1.5rem; font-size: 2.5rem;">
-                ML Engineering Assistant
-            </h1>
-            
-            <p style="font-size: 1.3em; line-height: 1.6; margin-bottom: 1.5rem; color: white;">
+    <div class="ai-overlay" id="ai-overlay">
+        <div class="ai-assistant">
+            <div class="ai-avatar">🤖</div>
+            <h2 style="color: #ff6b35; margin-bottom: 1rem;">ML Engineering Assistant</h2>
+            <p style="font-size: 1.2em; line-height: 1.6; margin-bottom: 1.5rem;">
                 Hey there! I'm your AI-powered predictive maintenance assistant. I've been trained on 
                 9,000+ grid assets using XGBoost, TensorFlow, and scikit-learn ensemble models. 
                 Ready to prevent failures and save millions? Let's dive into the data! 📊
             </p>
-            
-            <p style="font-size: 1.1em; color: #ccc; margin-bottom: 2.5rem;">
+            <p style="font-size: 1em; color: #ccc; margin-bottom: 2rem;">
                 <strong>Current Status:</strong> 146 high-risk assets identified • $2.3M potential savings
             </p>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <div onclick="document.getElementById('enter-btn').click()" 
+                     style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                            color: white; border: none; border-radius: 30px; 
+                            padding: 15px 40px; font-size: 1.2rem; font-weight: 600;
+                            cursor: pointer; transition: all 0.3s ease;
+                            text-transform: uppercase; letter-spacing: 2px;
+                            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+                            display: inline-block;"
+                     onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(255, 107, 53, 0.6)';"
+                     onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 8px 25px rgba(255, 107, 53, 0.4)';">
+                    🚀 Enter Website
+                </div>
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Now add the buttons below the welcome message - these will be visible
-    st.markdown("---")
-    
-    # Center the buttons
-    col1, col2, col3 = st.columns([1, 1, 1])
-    
-    with col1:
-        if st.button("🚀 Enter Website", 
-                    key="enter_main_button", 
-                    help="Click to enter the ML platform",
-                    use_container_width=True):
-            st.session_state.ai_assistant_visible = False
-            st.success("Welcome to the Smart Grid Predictive Maintenance Platform!")
-            st.rerun()
-    
-    with col2:
-        if st.button("🔊 Test Voice", 
-                    key="test_voice_button",
-                    help="Test voice synthesis",
-                    use_container_width=True):
-            st.markdown("""
-            <script>
-            if ('speechSynthesis' in window) {
-                const msg = new SpeechSynthesisUtterance('Hello! Welcome to our Smart Grid platform. I am your ML assistant ready to help!');
-                msg.rate = 0.8;
-                speechSynthesis.speak(msg);
-            } else {
-                alert('Voice not supported in your browser');
-            }
-            </script>
-            """, unsafe_allow_html=True)
-            st.info("🔊 Voice test initiated! You should hear a welcome message.")
-    
-    with col3:
-        if st.button("ℹ️ Skip Intro", 
-                    key="skip_intro_button",
-                    help="Skip directly to the platform",
-                    use_container_width=True):
-            st.session_state.ai_assistant_visible = False
-            st.rerun()
-    
-    # Instructions
-    st.markdown("""
-    <div style="text-align: center; margin-top: 2rem; padding: 1rem; 
-                background: rgba(255, 107, 53, 0.1); border-radius: 10px;">
-    <h4 style="color: #ff6b35;">Quick Start Instructions:</h4>
-    <p style="color: #ccc;">
-    • Click <strong>"🚀 Enter Website"</strong> to start exploring the ML platform<br>
-    • Try <strong>"🔊 Test Voice"</strong> to check if voice synthesis works in your browser<br>
-    • Use <strong>"ℹ️ Skip Intro"</strong> to go directly to the dashboard
-    </p>
-    </div>
-    """, unsafe_allow_html=True)
+    # Hidden Streamlit button that gets triggered by the HTML button
+    if st.button("Enter", key="enter-btn", help="Enter the platform"):
+        st.session_state.ai_assistant_visible = False
+        st.rerun()
 
 # Main content (only show when overlay is dismissed)
 if not st.session_state.ai_assistant_visible:
