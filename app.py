@@ -301,11 +301,78 @@ if st.session_state.ai_assistant_visible:
     </div>
     """, unsafe_allow_html=True)
 
-# Button to dismiss overlay
+# Enhanced button to enter website with voice functionality
 if st.session_state.ai_assistant_visible:
-    if st.button("Launch Predictive Analytics Platform 🚀", key="launch_button"):
+    # Add JavaScript for text-to-speech functionality
+    st.markdown("""
+    <script>
+    function speakWelcome() {
+        if ('speechSynthesis' in window) {
+            const message = new SpeechSynthesisUtterance(
+                "Welcome to the Smart Grid Predictive Maintenance platform! I'm your ML Engineering Assistant, ready to help you explore our advanced analytics and prevent equipment failures. Let's dive into the data and save millions together!"
+            );
+            message.rate = 0.9;
+            message.pitch = 1.1;
+            message.volume = 0.8;
+            
+            // Try to use a friendly voice
+            const voices = speechSynthesis.getVoices();
+            const preferredVoice = voices.find(voice => 
+                voice.name.includes('Google') || 
+                voice.name.includes('Samantha') || 
+                voice.name.includes('Karen') ||
+                voice.lang.includes('en-US')
+            );
+            if (preferredVoice) {
+                message.voice = preferredVoice;
+            }
+            
+            speechSynthesis.speak(message);
+        }
+    }
+    
+    function enterWebsite() {
+        speakWelcome();
+        // Small delay to let speech start, then trigger button click
+        setTimeout(() => {
+            const button = document.querySelector('[data-testid="baseButton-secondary"]');
+            if (button && button.textContent.includes('Enter Website')) {
+                button.click();
+            }
+        }, 500);
+    }
+    </script>
+    """, unsafe_allow_html=True)
+    
+    # Custom styled button for entering website
+    st.markdown("""
+    <div style="text-align: center; margin-top: 2rem;">
+        <button onclick="enterWebsite()" 
+                style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                       color: white; border: none; border-radius: 30px; 
+                       padding: 15px 40px; font-size: 1.2rem; font-weight: 600;
+                       cursor: pointer; transition: all 0.3s ease;
+                       text-transform: uppercase; letter-spacing: 2px;
+                       box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);"
+                onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(255, 107, 53, 0.6)';"
+                onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 8px 25px rgba(255, 107, 53, 0.4)';">
+            🚀 Enter Website & Start Voice Tour
+        </button>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Fallback Streamlit button (hidden but functional)
+    if st.button("Enter Website", key="enter_button", help="Click to enter the ML platform"):
         st.session_state.ai_assistant_visible = False
         st.rerun()
+        
+    # Voice controls info
+    st.markdown("""
+    <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #999;">
+    🔊 <strong>Voice Assistant Enabled</strong> - Your browser will ask for microphone permissions<br>
+    Click the button above to hear a friendly welcome message as you enter!
+    </div>
+    """, unsafe_allow_html=True)
 
 # Main content (only show when overlay is dismissed)
 if not st.session_state.ai_assistant_visible:
