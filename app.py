@@ -282,7 +282,7 @@ BUSINESS_IMPACT = {
     "alert_fatigue_reduction": 78
 }
 
-# AI Assistant Overlay with integrated enter button
+# Simple AI Assistant Overlay with X close button
 if st.session_state.ai_assistant_visible:
     st.markdown("""
     <div class="ai-overlay" id="ai-overlay">
@@ -297,29 +297,27 @@ if st.session_state.ai_assistant_visible:
             <p style="font-size: 1em; color: #ccc; margin-bottom: 2rem;">
                 <strong>Current Status:</strong> 146 high-risk assets identified • $2.3M potential savings
             </p>
-            
-            <div style="text-align: center; margin-top: 2rem;">
-                <div onclick="document.getElementById('enter-btn').click()" 
-                     style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-                            color: white; border: none; border-radius: 30px; 
-                            padding: 15px 40px; font-size: 1.2rem; font-weight: 600;
-                            cursor: pointer; transition: all 0.3s ease;
-                            text-transform: uppercase; letter-spacing: 2px;
-                            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
-                            display: inline-block;"
-                     onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(255, 107, 53, 0.6)';"
-                     onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 8px 25px rgba(255, 107, 53, 0.4)';">
-                    🚀 Enter Website
-                </div>
-            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Hidden Streamlit button that gets triggered by the HTML button
-    if st.button("Enter", key="enter-btn", help="Enter the platform"):
-        st.session_state.ai_assistant_visible = False
-        st.rerun()
+    # Add close button positioned in top right corner
+    col1, col2, col3, col4, col5 = st.columns([4, 1, 1, 1, 1])
+    with col5:
+        if st.button("❌", key="close_overlay", help="Close and enter website"):
+            st.session_state.ai_assistant_visible = False
+            st.rerun()
+    
+    # Add main enter button centered below
+    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🚀 Enter Website", 
+                    key="enter_website_main", 
+                    help="Click to enter the ML platform",
+                    use_container_width=True):
+            st.session_state.ai_assistant_visible = False
+            st.rerun()
 
 # Main content (only show when overlay is dismissed)
 if not st.session_state.ai_assistant_visible:
